@@ -35,6 +35,7 @@ class Login extends Component{
                     keyboardType='email-address'
                     secureTextEntry={true}
                 />
+                <Text style={styles.error}>{this.props.error}</Text>
                 <TouchableOpacity style={styles.button} onPress={()=>this.props.login(this.state.email, this.state.password)} >
                     <Text style={styles.textButton}>Loguearse</Text>    
                 </TouchableOpacity>
@@ -88,6 +89,9 @@ const styles = StyleSheet.create({
     },
     span: {
         color:'#2b1e49',
+    },
+    error:{
+        color:'red',
     }
 
 })
