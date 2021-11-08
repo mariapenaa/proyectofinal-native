@@ -18,6 +18,7 @@ class Menu extends Component{
     constructor(){
         super();
         this.state = {
+            error:'',
             userLogued:false,
             user:{}
         }
@@ -25,10 +26,13 @@ class Menu extends Component{
     
     componentDidMount(){
         auth.onAuthStateChanged(user => {
-            this.setState({
-                userLogued:true,
-                user: user,
-            })
+            if(user!=null){
+                this.setState({
+                    userLogued:true,
+                    user: user,
+                })
+            }
+            console.log(user)
         })
 
         console.log(this.state.user)
@@ -40,9 +44,17 @@ class Menu extends Component{
             .then( ()=>{
                 console.log('Registrado');
                 this.updateUser(username, null)
+                this.setState({
+                    error:'',
+                    userLogued:false,
+                })
             })
             .catch( error => {
                 console.log(error);
+                this.setState({
+                    error:error.message,
+                    userLogued:false,
+                })  
             })
     }
 
@@ -51,12 +63,18 @@ class Menu extends Component{
         auth.signInWithEmailAndPassword(email,pass)
             .then( response => {
                 this.setState({
+                    error: '',
                     userLogued: true,
                     user:response.user,
                 })
                 console.log(response)
             })
-            .catch(e => console.log(e))
+            .catch( error => {
+                console.log(error);
+                this.setState({
+                    error:error.message,
+                })  
+            })
     }
 
     logout(){
@@ -67,7 +85,12 @@ class Menu extends Component{
                     userLogued: false,
                 })
             })
-            .catch()
+            .catch(error=>{
+                console.log(error)
+                this.setState({
+                    error:error.message
+                })
+            })
         
     }
 
@@ -92,8 +115,8 @@ class Menu extends Component{
             <NavigationContainer>
             {this.state.userLogued == false ?
                 <Drawer.Navigator>
-                    <Drawer.Screen name="Registro" component={()=><Register register={(email, pass, username)=>this.register(email, pass, username)} />} />
-                    <Drawer.Screen name="Login" component={()=><Login login={(email, pass)=>this.login(email, pass)} />}/>
+                    <Drawer.Screen name="Registro" component={()=><Register register={(email, pass, username)=>this.register(email, pass, username)} error={this.state.error}/>} />
+                    <Drawer.Screen name="Login" component={()=><Login login={(email, pass)=>this.login(email, pass)} error={this.state.error}/>}/>
                 </Drawer.Navigator> :
                 <Drawer.Navigator>
                     <Drawer.Screen name="Home" component={()=><Home />} />
