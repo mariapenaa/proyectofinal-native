@@ -6,17 +6,16 @@ class Register extends Component{
         super(props)
         this.state={
             email:'',
-            userName:'',
+            username:'',
             password:'',
+            error:'',
         }
     }
-    
-    // Deprecado por inclusión de Firebase
-    // onSubmit(){
-    //     console.log(`El email ingresado es: ${this.state.email}`);
-    //     console.log(`El usuario ingresado es: ${this.state.userName}`);
-    //     console.log(`La contraseña ingresada es: ${this.state.password}`);
-    // }
+
+    componentDidMount(){
+        
+    }
+
 
     render(){
         return(
@@ -29,7 +28,7 @@ class Register extends Component{
                     keyboardType='email-address'/>
                 <TextInput
                     style={styles.input}
-                    onChangeText={(text)=>this.setState({userName: text})}
+                    onChangeText={(text)=>this.setState({username: text})}
                     placeholder='user name'
                     keyboardType='default'/>
                 <TextInput
@@ -46,7 +45,8 @@ class Register extends Component{
                     keyboardType='email-address'
                     secureTextEntry={true}
                 />
-                <TouchableOpacity style={styles.button} onPress={()=>this.props.register(this.state.email, this.state.password)} >
+
+                <TouchableOpacity style={styles.button} onPress={()=>this.props.register(this.state.email, this.state.password, this.state.username)} >
                     <Text style={styles.textButton}>Registrarse</Text>    
                 </TouchableOpacity>
                 <Text style={styles.redirect}>¿Ya tienes una cuenta? <Text style={styles.span}>Logueate.</Text></Text>
