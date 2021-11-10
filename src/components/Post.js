@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList} from 'react-native';
 import { db } from '../firebase/config';
 import firebase from 'firebase';
-import { auth } from '../firebase/config'
+import { auth } from '../firebase/config';
+import { TextInput } from 'react-native-gesture-handler';
 
 class Post extends Component{
     constructor(props){
@@ -10,7 +11,7 @@ class Post extends Component{
         this.state = {
            likes: 0,
            myLike: false,
-           showMOdal: false,
+           showModal: false,
            comment: '',
         }
     }
@@ -44,6 +45,31 @@ class Post extends Component{
             })
         })
     }
+    showModal(){
+        this.setState({
+            showModal: true,
+        })
+    }
+    hideModal(){
+        this.setState({
+            showModal: false,
+        })
+    }
+    guardarComentario(){
+        let comentario ={
+            createdAt: Date.now(),
+            author: auth.currentUser.email,
+            text: this.state.comment, 
+        }
+        db.collection('posts').doc(this.props.postData.id).update({
+            comments: firebase.firestore.FieldValue.arrayUnion(comentario)
+        })
+        .then(()=> {
+            this.setState({
+                comment: ''
+            })
+        })
+    }
 
     render(){
         console.log(this.props);
@@ -55,6 +81,19 @@ class Post extends Component{
                 {this.state.myLike == false ? 
                 <TouchableOpacity onPress={()=> this.darLike()}><Image style={styles.image} source={require('../../assets/like.png')} resizeMode='contain'/></TouchableOpacity>:
                 <TouchableOpacity onPress ={()=> this.sacarLike()}><Image style={styles.image} source={require('../../assets/dislike.png')} resizeMode='contain'/></TouchableOpacity>}      
+            <TouchableOpacity onPress={()=> this.showModal()}><Text> Ver Comentarios</Text></TouchableOpacity>
+            {this.state.showModal ?
+            <Modal style={styles.modalContainer} visible={this.state.showModal} animationType='slide' transparent={false}>
+            <TouchableOpacity onPress={()=> this.hideModal()} ><Image style={styles.image} source={require('../../assets/cerrar.png')} resizeMode='contain'/></TouchableOpacity>
+            <FlatList
+             data={this.props.postData.data.comments}
+             keyExtractor={ comment =>comment.createdAt.toString()}
+             renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
+             <View> 
+             <TextInput placeholder="Comentar..." keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
+             <TouchableOpacity onPress={()=> this.guardarComentario()}> <Text>Guardar Comentario</Text> </TouchableOpacity>
+         </View>
+            </Modal> : <Text></Text> }
             </View>
         )
     }
