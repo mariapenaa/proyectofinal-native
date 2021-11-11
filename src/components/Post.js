@@ -84,15 +84,15 @@ class Post extends Component{
             <TouchableOpacity onPress={()=> this.showModal()}><Text> Ver Comentarios</Text></TouchableOpacity>
             {this.state.showModal ?
             <Modal style={styles.modalContainer} visible={this.state.showModal} animationType='slide' transparent={false}>
-            <TouchableOpacity onPress={()=> this.hideModal()} ><Image style={styles.image} source={require('../../assets/cerrar.png')} resizeMode='contain'/></TouchableOpacity>
+            <TouchableOpacity onPress={()=> this.hideModal()} ><Image style={styles.image} source={require('../../assets/cerrar.png')} resizeMode='contain'/><Text></Text></TouchableOpacity>
             <FlatList
              data={this.props.postData.data.comments}
              keyExtractor={ comment =>comment.createdAt.toString()}
              renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
-             <View> 
+             
              <TextInput placeholder="Comentar..." keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
              <TouchableOpacity onPress={()=> this.guardarComentario()}> <Text>Guardar Comentario</Text> </TouchableOpacity>
-         </View>
+    
             </Modal> : <Text></Text> }
             </View>
         )
@@ -108,10 +108,23 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         borderWidth: 1,
         padding: 10,
+        width: '100%',
+        height: '100%'
+
     },
     image:{
         height: 20,
-    }
+    },
+    modalContainer:{
+        height: '50%',
+        borderRadius:4,
+        padding: 5,
+        alignSelf:'center',
+        boxShadow:'rgb(204 204 204)0px 0px 9px 7px',
+        width: 50,
+        margin: 40,
+    },
+   
 })
 
 export default Post

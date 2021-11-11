@@ -1,13 +1,17 @@
 import { NavigationRouteContext } from "@react-navigation/native";
 import React, {Component} from "react";
 import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
-import { auth, db } from '../firebase/config'
+import { auth, db } from '../firebase/config';
+import MyCamera from '../components/MyCamera';
+
 
 class PostForm extends Component{
     constructor(props){
         super(props)
         this.state={
             textoPost:'',
+            showCamera: true,
+            url:'',
         }
     }
     submitPost(){
@@ -16,6 +20,7 @@ class PostForm extends Component{
             owner: auth.currentUser.email,
             texto: this.state.textoPost,
             createdAt: Date.now(),
+            photo: this.state.url, 
         })
         .then( ()=>{ //Limpiar el form de carga
             this.setState({
@@ -26,10 +31,18 @@ class PostForm extends Component{
         })
         .catch()
     }
+    onImageUpload(url){
+        this.setState({
+            showCamera: false,
+            url:url
+        })
+    }
 
     render(){
         return(
             <View style={styles.formContainer}>
+                {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} /> :
+                <View style={styles.formContainer}> 
                 <TextInput
                     style={styles.input}
                     onChangeText={(text)=>this.setState({textoPost: text})}
@@ -41,6 +54,8 @@ class PostForm extends Component{
                 <TouchableOpacity style={styles.button} onPress={()=>this.submitPost()}>
                     <Text style={styles.textButton}>Guardar</Text>    
                 </TouchableOpacity>
+                </View>
+    }
             </View>
         )
     }
