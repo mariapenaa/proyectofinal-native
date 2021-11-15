@@ -8,6 +8,7 @@ import Register from '../screens/Register';
 import Login from '../screens/Login';
 import Profile from '../screens/Profile';
 import PostForm from '../screens/PostForm';
+import Search from '../screens/Search';
 import { auth } from '../firebase/config';
 
 import firebase from 'firebase';
@@ -124,6 +125,7 @@ class Menu extends Component{
                     <Drawer.Screen name ="New Post" component={(drawerProps)=><PostForm drawerProps={drawerProps}/>}/>
                     <Drawer.Screen name="Profile" component={()=><Profile userData={this.state.user} logout={()=>this.logout()} />} />
                     <Drawer.Screen name="Activity" component={()=><Activity  />} />
+                    <Drawer.Screen name="Search" component={()=><Search  />} />
                 </Drawer.Navigator>
             }
             </NavigationContainer>
