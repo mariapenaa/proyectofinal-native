@@ -1,45 +1,45 @@
 import React, {Component} from 'react';
 import {Text, TouchableOpacity, View, StyleSheet, Image, ActivityIndicator, FlatList, TextInput} from 'react-native';
 import { db, auth } from '../firebase/config';
-import Post from '../components/Post';
+import ActivityCard from '../components/ActivityCard';
 
 
-class Home extends Component{
+class Activity extends Component{
   constructor(props){
     super(props);
     this.state ={
-      posteos: [],
+      activity : []
     }
   }
   componentDidMount(){
-    db.collection('posts').orderBy('createdAt','desc').onSnapshot(
+    db.collection('activity').orderBy('createdAt','desc').onSnapshot(
       docs => {
         console.log(docs);
         //Array para crear datos en formato más útil.
-        let posts = [];
+        let activity = [];
         docs.forEach( doc => {
-          posts.push({
+          activity.push({
             id: doc.id,   
             data: doc.data(),
           })
         })
-        console.log(posts);
+        console.log(activity);
 
         this.setState({
-          posteos: posts,
+          activity: activity,
         })
       }
     )
   }
 
+
   render(){
     return(
       <View style={styles.container}>
         <FlatList 
-          contentContainerStyle={styles.postContainer}
-          data= { this.state.posteos }
-          keyExtractor = { post => post.id}
-          renderItem = { ({item}) => <Post postData={item} />} 
+          data= { this.state.activity }
+          keyExtractor = { act => act.id}
+          renderItem = { ({item}) => <ActivityCard data={item} />} 
         />
       </View>
       )
@@ -48,8 +48,9 @@ class Home extends Component{
 
 const styles = StyleSheet.create({
   container:{
-    overflowY:'scroll'
+   
+
   }
 })
 
-export default Home;
+export default Activity;

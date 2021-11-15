@@ -1,12 +1,44 @@
 import React, {Component} from "react";
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground} from 'react-native';
+import Post from '../components/Post';
+import { db } from '../firebase/config';
+import firebase from 'firebase';
+import { auth } from '../firebase/config';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, FlatList, Modal} from 'react-native';
 
 class Profile extends Component{
     constructor(props){
         super(props)
         this.state={
-            
+            posteos : [],
+            showModal:false,
         }
+    }
+
+    componentDidMount(){
+            db.collection('posts').where("owner", "==", auth.currentUser.email).onSnapshot(
+              docs => {
+                console.log(docs);
+                //Array para crear datos en formato más útil.
+                let posts = [];
+                docs.forEach( doc => {
+                  posts.push({
+                    id: doc.id,   
+                    data: doc.data(),
+                  })
+                })
+                console.log(posts);
+        
+                this.setState({
+                  posteos: posts,
+                })
+              }
+            )
+    }
+
+    showModal(){
+        this.setState({
+            showModal: true,
+        })
     }
 
 
@@ -22,23 +54,66 @@ class Profile extends Component{
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
+                            <TouchableOpacity onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.showModal()} ><Text>Edit profile</Text></TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
+                    <View style={styles.profilePosts}>
+                        <Text>Mis posteos</Text>
+                        <FlatList 
+                            style={{
+                                width: '100%',
+                            }}
+                            contentContainerStyle={styles.listContainer}
+                            data= { this.state.posteos }
+                            keyExtractor = { post => post.id}
+                            renderItem = { ({item}) => <Post postData={item} />} 
+                            />
+                        </View>
                 </View>
+                {this.state.showModal ?
+                    <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
+                       <View style={styles.container}>
+                            <View style={styles.modalView}>
+                              
+                            </View>
+                        </View>
+                    </Modal> : <Text></Text> }
             </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    listContainer:{
+        flex:1,
+        alignItems:'center'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
     background:{
         backgroundColor:'pink',
-        height:'30vh',
+        height:'33vh',
         width:'100%',
     },
+    profilePosts:{
+        paddingHorizontal:30,
+    },
     container:{
-        width:'100%',
+        width:'110%',
         position:'absolute',
         top:'18vh'
     },
@@ -49,12 +124,16 @@ const styles = StyleSheet.create({
     main:{
         display:'flex',
         width:'100%',
-        minHeight:'100vh',
+        flex:1,
         alignItems:'center',
         backgroundColor:'white',
-        position:'relative'
+        position:'relative',
+        overflow:'hidden',
+        overflowY:'scroll'
     },
     infoContainer:{
+        overflowX:'hidden',
+        overflowY:'scroll',
         display:'flex',
         alignItems:'center',
         width:'100%',

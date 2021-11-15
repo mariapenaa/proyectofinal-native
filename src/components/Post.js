@@ -4,6 +4,8 @@ import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
 import { TextInput } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-eva-icons';
+
 
 class Post extends Component{
     constructor(props){
@@ -13,15 +15,18 @@ class Post extends Component{
            myLike: false,
            showModal: false,
            comment: '',
+           comments:0
         }
     }
     componentDidMount(){
-        if(this.props.postData.data.likes){
+        console.log(this.props.postData)
+
             this.setState({
-                likes: this.props.postData.data.likes.length,
-                myLike: this.props.postData.data.likes.includes(auth.currentUser.email)
+                likes: this.props.postData.data.likes ? this.props.postData.data.likes.length : 0,
+                comments: this.props.postData.data.comments ? this.props.postData.data.comments.length : 0,
+                myLike: this.props.postData.data.likes ? this.props.postData.data.likes.includes(auth.currentUser.email) : false,
             })
-        }
+
     }
     darLike(){
         db.collection('posts').doc(this.props.postData.id).update({
@@ -29,8 +34,14 @@ class Post extends Component{
         })
         .then(()=> {
             this.setState({
-                likes: this.props.postData.data.likes.length,
+                likes: this.state.likes +1,
                 myLike: true,
+            })
+            db.collection('activity').add({
+                owner: auth.currentUser.email,
+                type: 'like',
+                createdAt: Date.now(),
+                postBy:this.props.postData.data.owner, 
             })
         })
     }
@@ -42,6 +53,12 @@ class Post extends Component{
             this.setState({
                 likes: this.props.postData.data.likes.length,
                 myLike: false, 
+            })
+            db.collection('activity').add({
+                owner: auth.currentUser.email,
+                type: 'unlike',
+                createdAt: Date.now(),
+                postBy:this.props.postData.data.owner, 
             })
         })
     }
@@ -61,26 +78,48 @@ class Post extends Component{
             author: auth.currentUser.email,
             text: this.state.comment, 
         }
+        console.log(this.props)
         db.collection('posts').doc(this.props.postData.id).update({
             comments: firebase.firestore.FieldValue.arrayUnion(comentario)
         })
         .then(()=> {
+            db.collection('activity').add({
+                owner: auth.currentUser.email,
+                type: 'comment',
+                createdAt: Date.now(),
+                postBy:this.props.postData.data.owner, 
+                comment:this.state.comment
+            })
             this.setState({
-                comment: ''
+                comment: '',
+                comments:this.state.comments +1,
             })
         })
     }
 
     render(){
         return(
-            <View style={styles.contanier}>
-                <Text>Texto del post: {this.props.postData.data.texto}</Text>
-                <Text>user: {this.props.postData.data.owner} </Text> 
-                <Text>Likes: {this.state.likes}</Text>   
-                {this.state.myLike == false ? 
-                <TouchableOpacity onPress={()=> this.darLike()}><Image style={styles.image} source={require('../../assets/like.png')} resizeMode='contain'/></TouchableOpacity>:
-                <TouchableOpacity onPress ={()=> this.sacarLike()}><Image style={styles.image} source={require('../../assets/dislike.png')} resizeMode='contain'/></TouchableOpacity>}      
-                <TouchableOpacity onPress={()=> this.showModal()}><Text> Ver Comentarios</Text></TouchableOpacity>
+            <View style={styles.container}>
+                <View style={styles.user}>
+                    <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
+                    <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
+                </View>
+                <View style={styles.imgContainer}>
+                    {this.props.postData.data.photo ? 
+                    <Image 
+                    style={styles.photo}
+                    source={{uri:this.props.postData.data.photo}}/> : ''}
+                </View>
+                <View style={styles.actionContainer}>
+                    <View style={styles.actionLine}>
+                        {this.state.myLike == false ? 
+                        <><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>:
+                        <><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>}      
+                        <TouchableOpacity onPress={()=> this.showModal()}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                    </View>
+                   {/*  <Text>Likes: {this.state.likes}</Text>    */}
+                    <Text>{this.props.postData.data.texto}</Text>
+                </View>
                 {this.state.showModal ?
                     <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
                         <View style={styles.container}>
@@ -105,16 +144,52 @@ class Post extends Component{
 
 
 const styles = StyleSheet.create({
-    contanier:{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
+    container:{
+        marginHorizontal:20,
+        marginVertical:10,
+        borderRadius:20,
+        border:'solid pink 1px',
+        padding:20,
+        backgroundColor:'white',
+        flex:1,
+        boxSizing:'border-box',
+        minHeight:'50vh'
     },
-    image:{
+    photo:{
+        flex:1
+    },
+    imgContainer: {
+        width:'100%',
+        flex:4,
+    },
+    image: {
+        width:20,
         height:20,
+        flex:1,
     },
-
+    user:{
+        flex:1,
+    },
+    userMain:{
+        fontSize:16,
+    },
+    userSecond:{
+        fontSize:13,
+        color:'grey'
+    },
+    actionContainer:{
+        flex:2
+    },
+    subText:{
+        color:'black',
+        marginRight:12,
+    },
+    actionLine:{
+        display:'flex',
+        alignItems:'center',
+        flexDirection:'row',
+        justifyContent:'flex-start'
+    },
     modalView: {
         margin: 20,
         backgroundColor: "white",

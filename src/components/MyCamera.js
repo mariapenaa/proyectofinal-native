@@ -66,7 +66,7 @@ clear(){
 
 render(){
     return(
-        <View style={StyleSheet.container}>
+        <View style={styles.container}>
             {this.state.permission ?
             this.state.showCamera === false ?
         <React.Fragment>
@@ -93,6 +93,7 @@ render(){
 const styles= StyleSheet.create({
     container:{
         flex: 1,
+        minHeight:'80vh'
     },
     cameraBody:{
         flex:7,

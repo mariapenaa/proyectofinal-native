@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator} from '@react-navigation/drawer';
 
 import Home from '../screens/Home';
+import Activity from '../screens/Activity';
 import Register from '../screens/Register';
 import Login from '../screens/Login';
 import Profile from '../screens/Profile';
@@ -122,6 +123,7 @@ class Menu extends Component{
                     <Drawer.Screen name="Home" component={()=><Home />} />
                     <Drawer.Screen name ="New Post" component={(drawerProps)=><PostForm drawerProps={drawerProps}/>}/>
                     <Drawer.Screen name="Profile" component={()=><Profile userData={this.state.user} logout={()=>this.logout()} />} />
+                    <Drawer.Screen name="Activity" component={()=><Activity  />} />
                 </Drawer.Navigator>
             }
             </NavigationContainer>

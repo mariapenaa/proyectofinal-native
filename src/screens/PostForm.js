@@ -15,9 +15,10 @@ class PostForm extends Component{
         }
     }
     submitPost(){
-        console.log('posteando...');
+        console.log(auth.currentUser);
         db.collection('posts').add({
             owner: auth.currentUser.email,
+            ownerName:auth.currentUser.displayName,
             texto: this.state.textoPost,
             createdAt: Date.now(),
             photo: this.state.url, 
@@ -25,6 +26,13 @@ class PostForm extends Component{
         .then( ()=>{ //Limpiar el form de carga
             this.setState({
                 textoPost:'',
+            })
+            db.collection('activity').add({
+                owner: auth.currentUser.email,
+             
+                type: 'post',
+                createdAt: Date.now(),
+                postBy:auth.currentUser.email,
             })
             //Redirección
             this.props.drawerProps.navigation.navigate('Home')
@@ -41,7 +49,7 @@ class PostForm extends Component{
     render(){
         return(
             <View style={styles.formContainer}>
-                {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} /> :
+                {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} /> : 
                 <View style={styles.formContainer}> 
                 <TextInput
                     style={styles.input}
@@ -55,7 +63,7 @@ class PostForm extends Component{
                     <Text style={styles.textButton}>Guardar</Text>    
                 </TouchableOpacity>
                 </View>
-    }
+     } 
             </View>
         )
     }
