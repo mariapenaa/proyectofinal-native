@@ -8,30 +8,39 @@ class Search extends Component{
   constructor(props){
     super(props);
     this.state ={
-      search: '',
+      results: '',
+      searched:false,
     }
   }
 
   search(input){
-      console.log(input)
-      db.collection('posts').orderBy('owner').startAt(input.toLowerCase()).endAt(input + '\uf8ff').onSnapshot(
-        docs => {
-          console.log(docs);
-          //Array para crear datos en formato más útil.
-          let posts = [];
-          docs.forEach( doc => {
-            posts.push({
-              id: doc.id,   
-              data: doc.data(),
+    console.log(input)
+      if(input === '' || input === null){
+        this.setState({
+          results:[],
+          searched:false,
+        })
+      }else{
+        db.collection('posts').orderBy('owner').startAt(input.toLowerCase()).endAt(input + '\uf8ff').onSnapshot(
+          docs => {
+            console.log(docs);
+            //Array para crear datos en formato más útil.
+            let posts = [];
+            docs.forEach( doc => {
+              posts.push({
+                id: doc.id,   
+                data: doc.data(),
+              })
             })
-          })
-          console.log(posts);
-  
-          this.setState({
-            search: posts,
-          })
-        }
-      )
+            console.log(posts);
+    
+            this.setState({
+              results: posts,
+              searched:true
+            })
+          }
+        )
+      }
   }
  
 
@@ -44,10 +53,10 @@ class Search extends Component{
                     onChangeText={(input)=> this.search(input)}
                     placeholder='Buscá los posteos de un usuario'
                     keyboardType='default'/>
-            {this.state.search.length == 0 ? 'No hay posteos de este usuario' :
+            {this.state.results.length == 0 && this.state.searched  ? 'No hay posteos de este usuario' :
             <FlatList 
                 contentContainerStyle={styles.postContainer}
-                data= { this.state.search }
+                data= { this.state.results }
                 keyExtractor = { post => post.id}
                 renderItem = { ({item}) => <Post postData={item} />} 
             />

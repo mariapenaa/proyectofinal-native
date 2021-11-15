@@ -97,36 +97,18 @@ class Post extends Component{
         })
     }
 
-    deletePost(){
-        db.collection('posts').where('createdAt','==',this.props.postData.data.createdAt)
-        .onSnapshot(
-            docs => {
-              console.log(docs);
-              //Array para crear datos en formato más útil.
-              docs.forEach( doc => {
-                doc.ref.delete()
-              })
-            }
-          ) 
-
-    }
-
     render(){
         return(
             <View style={styles.container}>
-                <View style={styles.userInfo}>
-                    <View style={styles.user}>
-                        <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
-                        <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
-                    </View>
-                    {this.props.postData.data.owner == auth.currentUser.email ? 
-                    <TouchableOpacity onPress={() => this.deletePost()}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : ''} 
+                <View style={styles.user}>
+                    <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
+                    <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
                 </View>
                 <View style={styles.imgContainer}>
                     {this.props.postData.data.photo ? 
                     <Image 
                     style={styles.photo}
-                    source={{uri:this.props.postData.data.photo}}/> : ''}
+                    source={{uri:this.props.postData.data.photo}}/> : <Text></Text>}
                 </View>
                 <View style={styles.actionContainer}>
                     <View style={styles.actionLine}>
@@ -185,11 +167,8 @@ const styles = StyleSheet.create({
         height:20,
         flex:1,
     },
-    userInfo:{
-        display: 'flex',
-        flexDirection: 'row',
-        width: '100%',
-        justifyContent: 'space-between'
+    user:{
+        flex:1,
     },
     userMain:{
         fontSize:16,
