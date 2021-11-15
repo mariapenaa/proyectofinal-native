@@ -114,9 +114,11 @@ class Post extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <View style={styles.user}>
-                    <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
-                    <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
+                <View style={styles.userInfo}>
+                    <View style={styles.user}>
+                        <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
+                        <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
+                    </View>
                     {this.props.postData.data.owner == auth.currentUser.email ? 
                     <TouchableOpacity onPress={() => this.deletePost()}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : ''} 
                 </View>
@@ -183,8 +185,11 @@ const styles = StyleSheet.create({
         height:20,
         flex:1,
     },
-    user:{
-        flex:1,
+    userInfo:{
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between'
     },
     userMain:{
         fontSize:16,
