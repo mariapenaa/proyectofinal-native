@@ -4,6 +4,7 @@ import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, FlatList, Modal} from 'react-native';
+import MyCamera from '../components/MyCamera';
 
 class Profile extends Component{
     constructor(props){
@@ -11,6 +12,8 @@ class Profile extends Component{
         this.state={
             posteos : [],
             showModal:false,
+            showCamera: false,
+            url: '',
         }
     }
 
@@ -40,7 +43,13 @@ class Profile extends Component{
             showModal: true,
         })
     }
-
+    onImageUpload(url){
+        this.setState({
+            showCamera: false,
+            url:url
+        })
+        this.props.updateUser('feli',this.state.url)
+    }
 
     render(){
         const image = { uri: '/assets/gradient.jpg' }
@@ -50,7 +59,10 @@ class Profile extends Component{
                 <ImageBackground source={require('../../assets/gradient.jpg')} resizeMode="cover" style={styles.background}> </ImageBackground>
                 <View style={styles.container}>
                     <View style={styles.infoContainer}>
-                        <View style={styles.imgView}></View>
+                        <View style={styles.imgView}>
+                            <Image 
+                    style={styles.photo}
+                    source={{uri:this.props.userData.uri}}/></View>
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
@@ -77,7 +89,8 @@ class Profile extends Component{
                     <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
                        <View style={styles.container}>
                             <View style={styles.modalView}>
-                              
+                              {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}}/>:
+                              <TouchableOpacity onPress={()=> this.setState({ showCamera: true})}><Text>Agregar Foto</Text></TouchableOpacity> }
                             </View>
                         </View>
                     </Modal> : <Text></Text> }
@@ -104,7 +117,9 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
+        width: '50%',
+        height:'30vh'
       },
     background:{
         backgroundColor:'pink',

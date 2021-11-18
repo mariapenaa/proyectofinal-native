@@ -93,7 +93,7 @@ render(){
 const styles= StyleSheet.create({
     container:{
         flex: 1,
-        minHeight:'80vh'
+        minHeight:'30vh'
     },
     cameraBody:{
         flex:7,
