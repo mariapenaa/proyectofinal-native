@@ -97,6 +97,7 @@ class Menu extends Component{
     }
 
     updateUser(username, photo){
+        console.log(photo)
         const user = firebase.auth().currentUser;
         if(user != null){
             user.updateProfile({
@@ -123,7 +124,7 @@ class Menu extends Component{
                 <Drawer.Navigator>
                     <Drawer.Screen name="Home" component={()=><Home />} />
                     <Drawer.Screen name ="New Post" component={(drawerProps)=><PostForm drawerProps={drawerProps}/>}/>
-                    <Drawer.Screen name="Profile" component={()=><Profile userData={this.state.user} logout={()=>this.logout()} updateUser={()=> this.updateUser(name,url)}/>} />
+                    <Drawer.Screen name="Profile" component={()=><Profile userData={this.state.user} logout={()=>this.logout()} updateUser={(name, url)=> this.updateUser(name,url)}/>} />
                     <Drawer.Screen name="Activity" component={()=><Activity  />} />
                     <Drawer.Screen name="Search" component={()=><Search  />} />
                 </Drawer.Navigator>

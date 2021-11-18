@@ -3,7 +3,7 @@ import Post from '../components/Post';
 import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, ImageBackground, FlatList, Modal} from 'react-native';
+import {View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ImageBackground, FlatList, Modal} from 'react-native';
 import MyCamera from '../components/MyCamera';
 
 class Profile extends Component{
@@ -44,11 +44,11 @@ class Profile extends Component{
         })
     }
     onImageUpload(url){
+        console.log(url)
         this.setState({
             showCamera: false,
-            url:url
-        })
-        this.props.updateUser('feli',this.state.url)
+            url:url,
+        }, ()=>this.props.updateUser('feli', this.state.url))
     }
 
     render(){
@@ -60,10 +60,10 @@ class Profile extends Component{
                 <View style={styles.container}>
                     <View style={styles.infoContainer}>
                         <View style={styles.imgView}>
-                            {this.props.userData.uri != (null && undefined && '') ?  
+                            {this.props.userData.photoURL != (null && undefined && '') ?  
                                 <Image 
                                     style={styles.photo}
-                                    source={{uri:this.props.userData.uri}}/>: <Text></Text>}
+                                    source={{uri:this.props.userData.photoURL}}/>: <Text></Text>}
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
@@ -130,6 +130,12 @@ const styles = StyleSheet.create({
     },
     profilePosts:{
         paddingHorizontal:30,
+    },
+    photo: {
+        width:20,
+        height:20,
+        flex:1,
+        zIndex:10,
     },
     container:{
         width:'110%',
