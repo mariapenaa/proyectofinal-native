@@ -47,7 +47,8 @@ class Register extends Component{
                 />
 
                 <Text style={styles.error}>{this.props.error}</ Text>
-                <TouchableOpacity style={styles.button} onPress={()=>this.props.register(this.state.email, this.state.password, this.state.username)} >
+                <TouchableOpacity style={this.state.email == '' || this.state.username == '' || this.state.password == '' ? styles.buttonDisabled : styles.button} onPress={()=>this.props.register(this.state.email, this.state.password, this.state.username)} 
+                disabled={this.state.email == '' || this.state.username == '' || this.state.password == '' ? true : false}>
                     <Text style={styles.textButton}>Registrarse</Text>    
                 </TouchableOpacity>
                 <Text style={styles.redirect}>¿Ya tienes una cuenta? <Text style={styles.span}>Logueate.</Text></Text>
@@ -81,6 +82,17 @@ const styles = StyleSheet.create({
     },
     button:{
         backgroundColor:'#2b1e49',
+        paddingHorizontal: 10,
+        paddingVertical: '0.7rem',
+        textAlign: 'center',
+        marginTop:'2rem',
+        marginBottom:'1.4rem',
+        borderRadius:4, 
+        fontSize:'1rem',
+        boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
+    },
+    buttonDisabled:{
+        backgroundColor:'grey',
         paddingHorizontal: 10,
         paddingVertical: '0.7rem',
         textAlign: 'center',

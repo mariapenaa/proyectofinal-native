@@ -15,7 +15,8 @@ class Post extends Component{
            myLike: false,
            showModal: false,
            comment: '',
-           comments:0
+           comments:0,
+           date: '',
         }
     }
     componentDidMount(){
@@ -26,7 +27,8 @@ class Post extends Component{
                 comments: this.props.postData.data.comments ? this.props.postData.data.comments.length : 0,
                 myLike: this.props.postData.data.likes ? this.props.postData.data.likes.includes(auth.currentUser.email) : false,
             })
-
+            this.convertDate()
+        
     }
     darLike(){
         db.collection('posts').doc(this.props.postData.id).update({
@@ -110,8 +112,26 @@ class Post extends Component{
           ) 
 
     }
+    convertDate(){
+        let date = new Date(this.props.postData.data.createdAt)
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear() 
+
+        if(month < 10){
+            this.setState({
+                date:  `${day}-0${month}-${year}`
+            })
+        
+          }else{
+              this.setState({
+                  date: `${day}-${month}-${year}`
+              })
+          }
+    }
 
     render(){
+        console.log(this.state)
         return(
             <View style={styles.container}>
                <View style={styles.userInfo}>
@@ -134,6 +154,7 @@ class Post extends Component{
                         <><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>:
                         <><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>}      
                         <TouchableOpacity onPress={()=> this.showModal()}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                        <Text style={styles.userSecond}> {this.state.date}</Text>
                     </View>
                    {/*  <Text>Likes: {this.state.likes}</Text>    */}
                     <Text>{this.props.postData.data.texto}</Text>
@@ -149,7 +170,7 @@ class Post extends Component{
                                 renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
                                 <View> 
                                     <TextInput placeholder="Comentar..." keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
-                                    <TouchableOpacity onPress={()=> this.guardarComentario()}> <Text>Guardar Comentario</Text> </TouchableOpacity>
+                                    <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text>Guardar Comentario</Text> </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
@@ -231,7 +252,30 @@ const styles = StyleSheet.create({
       },
     modalContainer: {
 
-    }
+    },
+    buttonComentar:{
+            backgroundColor:'#2b1e49',
+            paddingHorizontal: 10,
+            paddingVertical: '0.7rem',
+            textAlign: 'center',
+            marginTop:'2rem',
+            marginBottom:'1.4rem',
+            borderRadius:4, 
+            fontSize:'1rem',
+            boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
+    },
+    buttonComentarDisabled:{
+        backgroundColor:'grey',
+        paddingHorizontal: 10,
+        paddingVertical: '0.7rem',
+        textAlign: 'center',
+        marginTop:'2rem',
+        marginBottom:'1.4rem',
+        borderRadius:4, 
+        fontSize:'1rem',
+        boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
+},
+    
 })
 
 export default Post

@@ -54,6 +54,8 @@ class Profile extends Component{
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
+                            <Text style={styles.secondText}> Last signed in: {this.props.userData.metadata.lastSignInTime}</Text>
+                            <Text style={styles.secondText}> Number of posts: {this.state.posteos.length} </Text>
                             <TouchableOpacity onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
                             <TouchableOpacity onPress={()=>this.showModal()} ><Text>Edit profile</Text></TouchableOpacity>
                         </View>
