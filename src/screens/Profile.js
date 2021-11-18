@@ -60,9 +60,11 @@ class Profile extends Component{
                 <View style={styles.container}>
                     <View style={styles.infoContainer}>
                         <View style={styles.imgView}>
-                            <Image 
-                    style={styles.photo}
-                    source={{uri:this.props.userData.uri}}/></View>
+                            {this.props.userData.uri != (null && undefined && '') ?  
+                                <Image 
+                                    style={styles.photo}
+                                    source={{uri:this.props.userData.uri}}/>: <Text></Text>}
+                        </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
