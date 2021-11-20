@@ -3,7 +3,10 @@ import React, {Component} from "react";
 import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import { auth, db } from '../firebase/config';
 import MyCamera from '../components/MyCamera';
+import { Dimensions } from "react-native";
 
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+const CAPTURE_SIZE = Math.floor(WINDOW_HEIGHT * 0.08);
 
 class PostForm extends Component{
     constructor(props){
@@ -12,8 +15,10 @@ class PostForm extends Component{
             textoPost:'',
             showCamera: true,
             url:'',
+            dimensions: ''
         }
     }
+
     submitPost(){
         console.log(auth.currentUser);
         db.collection('posts').add({
@@ -49,7 +54,7 @@ class PostForm extends Component{
     render(){
         return(
             <View style={styles.formContainer}>
-                {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} /> : 
+                {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} style={{ flex: 1 }}/> : 
                 <View style={styles.formContainer}> 
                 <TextInput
                     style={styles.input}
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     },
     textButton:{
         color: '#fff'
-    }
+    },
 
 })
 

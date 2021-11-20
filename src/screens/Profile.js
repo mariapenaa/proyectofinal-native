@@ -70,7 +70,7 @@ class Profile extends Component{
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
                             <Text style={styles.secondText}> Last signed in: {this.props.userData.metadata.lastSignInTime}</Text>
                             <Text style={styles.secondText}> Number of posts: {this.state.posteos.length} </Text>
-                            <TouchableOpacity onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
                             <TouchableOpacity onPress={()=>this.showModal()} ><Text>Edit profile</Text></TouchableOpacity>
                         </View>
                     </View>
@@ -140,11 +140,13 @@ const styles = StyleSheet.create({
     container:{
         width:'110%',
         position:'absolute',
-        top:'18vh'
+        top:'18vh',
+        alignItems: 'center'
     },
     textContainer:{
         position:'absolute',
-        top:100
+        top:100,
+        alignItems: 'center'
     },
     main:{
         display:'flex',
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         position:'relative',
         overflow:'hidden',
-        overflowY:'scroll'
+        overflowY:'scroll',
     },
     infoContainer:{
         overflowX:'hidden',
@@ -186,6 +188,13 @@ const styles = StyleSheet.create({
         alignItems:'center',
         position:'absolute',
         top:'-50px'
+    },
+    logout:{
+        width: '21%',
+        backgroundColor: '#d09cf2',
+        borderRadius: '4%',
+        paddingLeft: '3%',
+        marginTop: '10%'
     }
 })
 
