@@ -1,6 +1,6 @@
 import { NavigationRouteContext } from "@react-navigation/native";
 import React, {Component} from "react";
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { auth, db } from '../firebase/config';
 import MyCamera from '../components/MyCamera';
 import { Dimensions } from "react-native";
@@ -15,12 +15,14 @@ class PostForm extends Component{
             textoPost:'',
             showCamera: true,
             url:'',
-            dimensions: ''
+            dimensions: '',
+            loading:false,
         }
     }
 
     submitPost(){
         console.log(auth.currentUser);
+        this.setState({loading:true})
         db.collection('posts').add({
             owner: auth.currentUser.email,
             ownerName:auth.currentUser.displayName,
@@ -31,6 +33,8 @@ class PostForm extends Component{
         .then( ()=>{ //Limpiar el form de carga
             this.setState({
                 textoPost:'',
+                url:'',
+                loading:false,
             })
             db.collection('activity').add({
                 owner: auth.currentUser.email,
@@ -51,14 +55,18 @@ class PostForm extends Component{
         })
     }
 
+
     render(){
         return(
             <View style={styles.formContainer}>
                 {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} style={{ flex: 1 }}/> : 
                 <View style={styles.formContainer}> 
-                 <Image 
-                    style={styles.photo}
-                    source={{uri:this.state.url}}/> 
+                <React.Fragment style={styles.imageContainer}>
+                    <Image 
+                        style={styles.photo}
+                        source={{uri:this.state.url}}/> 
+                {this.state.loading ?<ActivityIndicator style={styles.loader} size="large" /> : <Text></Text> } 
+                </React.Fragment>
                 <TextInput
                     style={styles.input}
                     onChangeText={(text)=>this.setState({textoPost: text})}
@@ -82,6 +90,14 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         marginTop: 20,
         flex:1,
+    },
+    imageContainer:{
+        position:'relative'
+    },
+    loader:{
+        position:'absolute',
+        top:'40%',
+        right:'35%'
     },
     photo:{
         flex:1

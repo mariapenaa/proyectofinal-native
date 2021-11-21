@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { Camera } from 'expo-camera';
 import { db, storage } from '../firebase/config'
 
@@ -10,8 +10,8 @@ class MyCamera extends Component {
             permission: false,
             photo: '',
             showCamera: true,
+            loading:false,
         }
-        this.camera 
     }
 
 
@@ -37,10 +37,11 @@ takePicture(){
 }
 
 savePhoto(){
+    this.setState({loading:true})
     fetch(this.state.photo)
         .then(res => res.blob())
         .then(image => {
-            const ref = storage.ref(`photos/${Date.now}.jpg`)
+            const ref = storage.ref(`photos/${Date.now()}.jpg`)
             ref.put(image)
             .then(()=>{
                 ref.getDownloadURL()
@@ -48,6 +49,7 @@ savePhoto(){
                     this.props.onImageUpload(url);
                     this.setState({
                         photo:'',
+                        loading:false
                     })
                 })
             })
@@ -69,10 +71,11 @@ render(){
         <View style={styles.container}>
             {this.state.permission ?
             this.state.showCamera === false ?
-            <React.Fragment>
+            <React.Fragment style={styles.imageContainer}>
                 <Image 
                 style={styles.cameraBody}
                 source={{uri:this.state.photo}}/>
+                {this.state.loading ?<ActivityIndicator style={styles.loader} size="large" /> : <Text></Text> } 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.buttonGreen} onPress={()=> this.savePhoto()}><Text style={styles.text}> Aceptar </Text></TouchableOpacity>
                 <TouchableOpacity style={styles.buttonRed} onPress={()=> this.clear()}> <Text style={styles.text}> Rechazar</Text></TouchableOpacity>
@@ -96,6 +99,15 @@ const styles= StyleSheet.create({
         flex: 1,
         justifyContent:'center'
     },
+    imageContainer:{
+        position:'relative'
+    },
+    loader:{
+        position:'absolute',
+        top:'40%',
+        right:'35%'
+    },
+
     cameraBody:{
         flex:7,
     },
