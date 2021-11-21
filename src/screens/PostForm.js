@@ -1,6 +1,6 @@
 import { NavigationRouteContext } from "@react-navigation/native";
 import React, {Component} from "react";
-import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { auth, db } from '../firebase/config';
 import MyCamera from '../components/MyCamera';
 import { Dimensions } from "react-native";
@@ -56,6 +56,9 @@ class PostForm extends Component{
             <View style={styles.formContainer}>
                 {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} style={{ flex: 1 }}/> : 
                 <View style={styles.formContainer}> 
+                 <Image 
+                    style={styles.photo}
+                    source={{uri:this.state.url}}/> 
                 <TextInput
                     style={styles.input}
                     onChangeText={(text)=>this.setState({textoPost: text})}
@@ -78,6 +81,10 @@ const styles = StyleSheet.create({
     formContainer:{
         paddingHorizontal:10,
         marginTop: 20,
+        flex:1,
+    },
+    photo:{
+        flex:1
     },
     input:{
         height:100,
@@ -97,7 +104,8 @@ const styles = StyleSheet.create({
         borderRadius:4, 
         borderWidth:1,
         borderStyle: 'solid',
-        borderColor: '#28a745'
+        borderColor: '#28a745',
+        marginBottom:10,
     },
     textButton:{
         color: '#fff'

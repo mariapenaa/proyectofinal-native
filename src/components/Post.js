@@ -161,16 +161,18 @@ class Post extends Component{
                 </View>
                 {this.state.showModal ?
                     <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
-                        <View style={styles.container}>
+                        <View>
                             <View style={styles.modalView}>
-                                <TouchableOpacity onPress={()=> this.hideModal()} ><Image style={styles.image} source={require('../../assets/cerrar.png')} resizeMode='contain'/></TouchableOpacity>
+                                <View style={styles.cross}>
+                                    <TouchableOpacity onPress={()=> this.hideModal()} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
+                                </View>
                                 <FlatList
                                 data={this.props.postData.data.comments}
                                 keyExtractor={ comment =>comment.createdAt.toString()}
                                 renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
                                 <View> 
-                                    <TextInput placeholder="Comentar..." keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
-                                    <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text>Guardar Comentario</Text> </TouchableOpacity>
+                                    <TextInput placeholder="Comentar..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
+                                    <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
@@ -193,6 +195,23 @@ const styles = StyleSheet.create({
         flex:1,
         boxSizing:'border-box',
         minHeight:'50vh'
+    },
+    cross:{
+        display:'flex',
+        justifyContent:'flex-end',
+        flexDirection:'row',
+        width:'100%'
+    },
+    buttonText:{
+        color:'white'
+    },
+    input:{
+        padding:'1.4rem',
+        borderWidth:1,
+        borderColor: '#ccc',
+        borderStyle: 'solid',
+        borderRadius: 6,
+        marginVertical:10,
     },
     photo:{
         flex:1
@@ -239,7 +258,8 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
+        justifyContent:'flexEnd',
+        padding: 15,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -262,10 +282,12 @@ const styles = StyleSheet.create({
             marginBottom:'1.4rem',
             borderRadius:4, 
             fontSize:'1rem',
-            boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
+            boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);',
+            color:'white'
     },
     buttonComentarDisabled:{
         backgroundColor:'grey',
+        color:'white',
         paddingHorizontal: 10,
         paddingVertical: '0.7rem',
         textAlign: 'center',

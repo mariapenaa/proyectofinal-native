@@ -5,6 +5,7 @@ import firebase from 'firebase';
 import { auth } from '../firebase/config';
 import {View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ImageBackground, FlatList, Modal} from 'react-native';
 import MyCamera from '../components/MyCamera';
+import { Icon } from 'react-native-eva-icons';
 
 class Profile extends Component{
     constructor(props){
@@ -14,10 +15,13 @@ class Profile extends Component{
             showModal:false,
             showCamera: false,
             url: '',
+            displayName:'',
+            changedName:''
         }
     }
 
     componentDidMount(){
+        console.log(auth.currentUser)
             db.collection('posts').where("owner", "==", auth.currentUser.email).onSnapshot(
               docs => {
                 console.log(docs);
@@ -32,24 +36,36 @@ class Profile extends Component{
                 console.log(posts);
         
                 this.setState({
-                  posteos: posts,
+                    posteos: posts,
+                    displayName:auth.currentUser.displayName,
+                    changedName:auth.currentUser.displayName,
+                    url:auth.currentUser.photoURL
                 })
               }
             )
     }
 
-    showModal(){
+    showModal(show){
         this.setState({
-            showModal: true,
+            showModal: show ? true : false,
         })
     }
+
+
+
+    onUserChange(user){
+        this.setState({
+            displayName:user
+        }, ()=>this.props.updateUser(this.state.displayName, this.state.url))
+    }
+
     onImageUpload(url){
-        console.log(url)
         this.setState({
             showCamera: false,
             url:url,
-        }, ()=>this.props.updateUser('feli', this.state.url))
+        }, ()=>this.props.updateUser(this.state.displayName, this.state.url))
     }
+
 
     render(){
         const image = { uri: '/assets/gradient.jpg' }
@@ -71,7 +87,7 @@ class Profile extends Component{
                             <Text style={styles.secondText}> Last signed in: {this.props.userData.metadata.lastSignInTime}</Text>
                             <Text style={styles.secondText}> Number of posts: {this.state.posteos.length} </Text>
                             <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={()=>this.showModal()} ><Text>Edit profile</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.showModal(true)} ><Text>Edit profile</Text></TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.profilePosts}>
@@ -91,8 +107,21 @@ class Profile extends Component{
                     <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
                        <View style={styles.container}>
                             <View style={styles.modalView}>
-                              {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}}/>:
-                              <TouchableOpacity onPress={()=> this.setState({ showCamera: true})}><Text>Agregar Foto</Text></TouchableOpacity> }
+                                <View style={styles.cross}>
+                                        <TouchableOpacity onPress={()=>{this.showModal(false)}} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
+                                </View>
+                            <Text>Cambiá tu nombre de usuario</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(text)=>this.setState({changedName: text})}
+                                placeholder='Escribí aquí'
+                                keyboardType='default'
+                                multiline
+                                value={this.state.changedName}    
+                            />
+                              <TouchableOpacity style={styles.button} onPress={()=>{this.onUserChange(this.state.changedName)} }><Text>Guardar cambios usuario</Text></TouchableOpacity> 
+                              {this.state.showCamera ? <MyCamera onImageUpload={(url)=> {this.onImageUpload(url)}} style={{ flex: 1 }}/>:
+                              <TouchableOpacity style={styles.button} onPress={()=> this.setState({ showCamera: true})}><Text>Agregar Foto</Text></TouchableOpacity> }
                             </View>
                         </View>
                     </Modal> : <Text></Text> }
@@ -105,6 +134,31 @@ const styles = StyleSheet.create({
     listContainer:{
         flex:1,
         alignItems:'center'
+    },
+    cross:{
+        display:'flex',
+        justifyContent:'flex-end',
+        flexDirection:'row',
+        width:'100%'
+    },
+    input:{
+        padding:'1.4rem',
+        borderWidth:1,
+        borderColor: '#ccc',
+        borderStyle: 'solid',
+        borderRadius: 6,
+        marginVertical:10,
+    },
+    button:{
+        backgroundColor:'#8fa7ef',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        textAlign: 'center',
+        borderRadius:4, 
+        borderWidth:1,
+        borderStyle: 'solid',
+        borderColor: '#28a745',
+        marginBottom:10,
     },
     modalView: {
         margin: 20,
@@ -120,8 +174,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-        width: '50%',
-        height:'30vh'
+        width: '80%',
+        height:'65vh',
+        marginRight:50,
       },
     background:{
         backgroundColor:'pink',
@@ -132,10 +187,12 @@ const styles = StyleSheet.create({
         paddingHorizontal:30,
     },
     photo: {
-        width:20,
-        height:20,
+                borderRadius:'50%',
+        width:130,
+        height:130,
         flex:1,
         zIndex:10,
+        elevation:10
     },
     container:{
         width:'110%',
@@ -168,7 +225,8 @@ const styles = StyleSheet.create({
         borderRadius:'100%',
         width:'100%',
         position:'relative',
-        height:'30vh'
+        height:'40vh',
+        zIndex:10,
     },
     mainText:{
         display:'flex',
