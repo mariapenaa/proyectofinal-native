@@ -64,16 +64,12 @@ class Post extends Component{
             })
         })
     }
-    showModal(){
+    showModal(show){
         this.setState({
-            showModal: true,
+            showModal: show ? true : false,
         })
     }
-    hideModal(){
-        this.setState({
-            showModal: false,
-        })
-    }
+
     guardarComentario(){
         let comentario ={
             createdAt: Date.now(),
@@ -90,7 +86,6 @@ class Post extends Component{
                 type: 'comment',
                 createdAt: Date.now(),
                 postBy:this.props.postData.data.owner, 
-                comment:this.state.comment
             })
             this.setState({
                 comment: '',
@@ -153,7 +148,7 @@ class Post extends Component{
                         {this.state.myLike == false ? 
                         <><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>:
                         <><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>}      
-                        <TouchableOpacity onPress={()=> this.showModal()}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                        <TouchableOpacity onPress={()=> this.showModal(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
                         <Text style={styles.userSecond}> {this.state.date}</Text>
                     </View>
                    {/*  <Text>Likes: {this.state.likes}</Text>    */}
@@ -164,14 +159,14 @@ class Post extends Component{
                         <View>
                             <View style={styles.modalView}>
                                 <View style={styles.cross}>
-                                    <TouchableOpacity onPress={()=> this.hideModal()} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
+                                    <TouchableOpacity onPress={()=> this.showModal(false)} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
                                 </View>
                                 <FlatList
                                 data={this.props.postData.data.comments}
                                 keyExtractor={ comment =>comment.createdAt.toString()}
                                 renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
                                 <View> 
-                                    <TextInput placeholder="Comentar..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} Value={this.state.comment} /> 
+                                    <TextInput placeholder="Comentar..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
                                     <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
                                 </View>
                             </View>
