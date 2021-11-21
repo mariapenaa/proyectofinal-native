@@ -72,15 +72,15 @@ class Profile extends Component{
         console.log(this.props.userData)
         return(
             <View style={styles.main}>
-                <ImageBackground source={require('../../assets/gradient.jpg')} resizeMode="cover" style={styles.background}> </ImageBackground>
-                <View style={styles.container}>
-                    <View style={styles.infoContainer}>
                         <View style={styles.imgView}>
                             {this.props.userData.photoURL != (null && undefined && '') ?  
                                 <Image 
                                     style={styles.photo}
                                     source={{uri:this.props.userData.photoURL}}/>: <Text></Text>}
                         </View>
+                <ImageBackground source={require('../../assets/gradient.jpg')} resizeMode="cover" style={styles.background}> </ImageBackground>
+                <View style={styles.container}>
+                    <View style={styles.infoContainer}>
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
@@ -239,13 +239,13 @@ const styles = StyleSheet.create({
     imgView:{
         borderRadius:'50%',
         width:130,
+        zIndex:10,
         height:130,
-        border:'solid black',
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
         position:'absolute',
-        top:'-50px'
+        top:'10%'
     },
     logout:{
         width: '21%',
