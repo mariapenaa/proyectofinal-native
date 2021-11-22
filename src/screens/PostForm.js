@@ -5,6 +5,7 @@ import { auth, db } from '../firebase/config';
 import MyCamera from '../components/MyCamera';
 import { Dimensions } from "react-native";
 
+
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const CAPTURE_SIZE = Math.floor(WINDOW_HEIGHT * 0.08);
 

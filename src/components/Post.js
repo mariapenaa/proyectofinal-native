@@ -127,7 +127,7 @@ class Post extends Component{
     render(){
         console.log(this.state)
         return(
-            <View style={styles.container}>
+            <View style={styles.container} blurRadius={1}>
                <View style={styles.userInfo}>
                     <View style={styles.user}>
                         <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
@@ -154,6 +154,7 @@ class Post extends Component{
                     <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
                 </View>
                 {this.state.showModal ?
+                
                     <Modal  visible={this.state.showModal} animationType='fade' transparent={true} avoidKeyboard={true}>
                    
                         <View style={styles.modal}>
@@ -164,7 +165,7 @@ class Post extends Component{
                                 <FlatList
                                 data={this.props.postData.data.comments}
                                 keyExtractor={ comment =>comment.createdAt.toString()}
-                                renderItem={ ({item}) =>  <View style={styles.flatlist}> <Text style={{fontWeight: "bold"}}> {item.author}: </Text> <Text> {item.text}</Text> </View>}/> 
+                                renderItem={ ({item}) => <View style={styles.flatlist}><Text>  <Icon name={'message-circle-outline'} width={15} height={15}></Icon>  {item.author}:  {item.text}</Text> </View>}/> 
                                 <View style={styles.comment}>  
                                     <TextInput placeholder="Agregá un nuevo comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
                                     <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
@@ -193,6 +194,8 @@ const styles = StyleSheet.create({
     },
     flatlist:{
         width:'100%',
+        marginBottom: '4%',
+        borderTop: '1px dotted black'
     },
     modal:{
         justifyContent: 'center',
