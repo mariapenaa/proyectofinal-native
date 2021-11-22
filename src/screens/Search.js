@@ -84,12 +84,14 @@ input:{
     height:20,
     padding:'1.4rem',
     borderWidth:1,
-    borderColor: '#ccc',
+    borderColor: 'pink',
     borderStyle: 'solid',
     borderRadius: 6,
     marginVertical:10,
 
+
 },
+
 })
 
 export default Search;

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList, } from 'react-native';
 import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
 import { TextInput } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-eva-icons';
-
 
 class Post extends Component{
     constructor(props){
@@ -152,11 +151,12 @@ class Post extends Component{
                         <Text style={styles.userSecond}> {this.state.date}</Text>
                     </View>
                    {/*  <Text>Likes: {this.state.likes}</Text>    */}
-                    <Text>{this.props.postData.data.texto}</Text>
+                    <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
                 </View>
                 {this.state.showModal ?
-                    <Modal  visible={this.state.showModal} animationType='fade' transparent={true}>
-                        <View>
+                    <Modal  visible={this.state.showModal} animationType='fade' transparent={true} avoidKeyboard={true}>
+                   
+                        <View style={styles.modal}>
                             <View style={styles.modalView}>
                                 <View style={styles.cross}>
                                     <TouchableOpacity onPress={()=> this.showModal(false)} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
@@ -164,9 +164,9 @@ class Post extends Component{
                                 <FlatList
                                 data={this.props.postData.data.comments}
                                 keyExtractor={ comment =>comment.createdAt.toString()}
-                                renderItem={ ({item}) => <Text> {item.author}:{item.text}</Text>}/> 
-                                <View> 
-                                    <TextInput placeholder="Comentar..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
+                                renderItem={ ({item}) =>  <View style={styles.flatlist}> <Text style={{fontWeight: "bold"}}> {item.author}: </Text> <Text> {item.text}</Text> </View>}/> 
+                                <View style={styles.comment}>  
+                                    <TextInput placeholder="Agregá un nuevo comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
                                     <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
                                 </View>
                             </View>
@@ -191,22 +191,38 @@ const styles = StyleSheet.create({
         boxSizing:'border-box',
         minHeight:'50vh'
     },
+    flatlist:{
+        width:'100%',
+    },
+    modal:{
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1, 
+        width: '100%'
+    },
+    modalView:{
+        backgroundColor: 'white',
+        width: '100%'
+    },
     cross:{
         display:'flex',
         justifyContent:'flex-end',
         flexDirection:'row',
-        width:'100%'
+        width:'100%',
+        marginBotton: '2%'
     },
     buttonText:{
         color:'white'
     },
+    comment:{
+        marginTop: '3%',
+        width: '90%'
+    },
     input:{
         padding:'1.4rem',
-        borderWidth:1,
-        borderColor: '#ccc',
-        borderStyle: 'solid',
         borderRadius: 6,
         marginVertical:10,
+        border: "1px solid pink",
     },
     photo:{
         flex:1
@@ -214,6 +230,7 @@ const styles = StyleSheet.create({
     imgContainer: {
         width:'100%',
         flex:4,
+        marginTop: '2%'
     },
     image: {
         width:20,
@@ -237,7 +254,8 @@ const styles = StyleSheet.create({
         color:'grey'
     },
     actionContainer:{
-        flex:2
+        flex:1,
+        marginTop: '2%'
     },
     subText:{
         color:'black',
@@ -265,9 +283,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
       },
-    modalContainer: {
-
-    },
     buttonComentar:{
             backgroundColor:'#2b1e49',
             paddingHorizontal: 10,
@@ -291,8 +306,11 @@ const styles = StyleSheet.create({
         borderRadius:4, 
         fontSize:'1rem',
         boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
-},
-    
+    },
+    textoPost:{
+        marginTop: '3%'
+    }
+
 })
 
 export default Post

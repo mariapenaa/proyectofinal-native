@@ -87,11 +87,11 @@ class Profile extends Component{
                             <Text style={styles.secondText}> Last signed in: {this.props.userData.metadata.lastSignInTime}</Text>
                             <Text style={styles.secondText}> Number of posts: {this.state.posteos.length} </Text>
                             <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
-                            <TouchableOpacity onPress={()=>this.showModal(true)} ><Text>Edit profile</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.editProfile} onPress={()=>this.showModal(true)} ><Text>Edit profile</Text></TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.profilePosts}>
-                        <Text>Mis posteos</Text>
+                        <Text  style={{fontWeight: "bold"}}>Mis posteos</Text>
                         <FlatList 
                             style={{
                                 width: '100%',
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     },
     profilePosts:{
         paddingHorizontal:30,
+        alignItems: 'center'
     },
     photo: {
                 borderRadius:'50%',
@@ -249,10 +250,18 @@ const styles = StyleSheet.create({
     },
     logout:{
         width: '21%',
-        backgroundColor: '#d09cf2',
+        border: '1px solid pink',
         borderRadius: '4%',
-        paddingLeft: '3%',
+        paddingLeft: '2.5%',
         marginTop: '10%'
+    },
+    editProfile: {
+        width: '29%',
+        border: '1px solid pink',
+        borderRadius: '4%',
+        paddingLeft: '2.5%',
+        marginTop: '10%',
+        marginTop: '2%'
     }
 })
 
