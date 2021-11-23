@@ -84,10 +84,10 @@ class Profile extends Component{
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
-                            <Text style={styles.secondText}> Last signed in: {this.props.userData.metadata.lastSignInTime}</Text>
-                            <Text style={styles.secondText}> Number of posts: {this.state.posteos.length} </Text>
-                            <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text>Logout</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.editProfile} onPress={()=>this.showModal(true)} ><Text>Edit profile</Text></TouchableOpacity>
+                            <Text style={styles.boldText}> Last signed in:</Text> <Text style={styles.secondText}>{this.props.userData.metadata.lastSignInTime}</Text>
+                            <Text style={styles.boldText}> Number of posts:</Text> <Text style={styles.secondText}> {this.state.posteos.length} </Text>
+                            <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text style={styles.texto}>Logout</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.editProfile} onPress={()=>this.showModal(true)} ><Text style={styles.texto}>Edit profile</Text></TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.profilePosts}>
@@ -237,6 +237,11 @@ const styles = StyleSheet.create({
         display:'flex',
         justifyContent:'center'
     },
+    boldText:{
+        display:'flex',
+        justifyContent:'center',
+        fontWeight:'bold',
+    },
     imgView:{
         borderRadius:'50%',
         width:130,
@@ -249,20 +254,26 @@ const styles = StyleSheet.create({
         top:'10%'
     },
     logout:{
-        width: '21%',
-        border: '1px solid pink',
-        borderRadius: '4%',
-        paddingLeft: '2.5%',
-        marginTop: '10%'
-    },
-    editProfile: {
-        width: '29%',
+        width: '40%',
         border: '1px solid pink',
         borderRadius: '4%',
         paddingLeft: '2.5%',
         marginTop: '10%',
-        marginTop: '2%'
-    }
+        backgroundColor: 'pink',
+    
+    },
+    editProfile: {
+        width: '40%',
+        border: '1px solid pink',
+        borderRadius: '4%',
+        paddingLeft: '2.5%',
+        marginTop: '10%',
+        marginTop: '2%',
+        backgroundColor: 'pink',
+    },
+    texto: {
+        fontWeight:'200'
+    },
 })
 
 export default Profile;
