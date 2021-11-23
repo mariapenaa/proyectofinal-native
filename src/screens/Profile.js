@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     photo: {
-                borderRadius:'50%',
+        borderRadius:'50%',
         width:130,
         height:130,
         flex:1,
@@ -224,9 +224,8 @@ const styles = StyleSheet.create({
         width:'100%',
         backgroundColor:'white',
         borderRadius:'100%',
-        width:'100%',
         position:'relative',
-        height:'40vh',
+        height:'45vh',
         zIndex:10,
     },
     mainText:{
@@ -255,24 +254,39 @@ const styles = StyleSheet.create({
     },
     logout:{
         width: '40%',
-        border: '1px solid pink',
+        border: '1px solid ',
         borderRadius: '4%',
         paddingLeft: '2.5%',
         marginTop: '10%',
-        backgroundColor: 'pink',
+        backgroundColor: '#2b1e49',
+        paddingHorizontal: 8,
+        paddingVertical: '0.5rem',
+        textAlign: 'center',
+        marginBottom:'0.4rem',
+        borderRadius:4, 
+        fontSize:'1rem',
+        boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
     
     },
     editProfile: {
         width: '40%',
-        border: '1px solid pink',
+        border: '1px solid ',
         borderRadius: '4%',
         paddingLeft: '2.5%',
         marginTop: '10%',
         marginTop: '2%',
-        backgroundColor: 'pink',
+        backgroundColor: '#2b1e49',
+        paddingHorizontal: 8,
+        paddingVertical: '0.5rem',
+        textAlign: 'center',
+        marginBottom:'0.4rem',
+        borderRadius:4, 
+        fontSize:'1rem',
+        boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);'
     },
     texto: {
-        fontWeight:'200'
+        fontWeight:'200',
+        color: 'white'
     },
 })
 
