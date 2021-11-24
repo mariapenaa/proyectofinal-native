@@ -36,11 +36,13 @@ class Login extends Component{
                     secureTextEntry={true}
                 />
                 <Text style={styles.error}>{this.props.error}</Text>
-                <TouchableOpacity style={this.state.email == '' || this.state.username == '' || this.state.password == '' ? styles.buttonDisabled: styles.button} onPress={()=>this.props.login(this.state.email, this.state.password)} 
-                disabled={this.state.email == '' || this.state.username == '' || this.state.password == '' ? true : false}>
+                <TouchableOpacity style={this.state.email == '' || this.state.username == '' || this.state.password == '' ? styles.buttonDisabled: styles.button} 
+                    onPress={()=>this.props.login(this.state.email, this.state.password)} 
+                    disabled={this.state.email == '' || this.state.username == '' || this.state.password == '' ? true : false}>
                     <Text style={styles.textButton}>Loguearse</Text>    
                 </TouchableOpacity>
-                <Text style={styles.redirect}>¿Todavía no tenes una cuenta? <Text style={styles.span}>Registrate.</Text></Text>
+                <Text style={styles.redirect}>¿Todavía no tenes una cuenta? 
+                <TouchableOpacity onPress={()=> this.props.drawerProps.navigation.navigate('Registro')}><Text style={styles.span} >Registrate.</Text></TouchableOpacity></Text>
             </View>
         )
     }

@@ -16,7 +16,6 @@ class ActivityCard extends Component{
         }
     }
     componentDidMount(){
-        console.log(this.props.data)
        switch (this.props.data.data.type) {
            case 'comment':
                this.setState({

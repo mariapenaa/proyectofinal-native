@@ -16,7 +16,8 @@ class Profile extends Component{
             showCamera: false,
             url: '',
             displayName:'',
-            changedName:''
+            changedName:'',
+            date:''
         }
     }
 
@@ -43,6 +44,7 @@ class Profile extends Component{
                 })
               }
             )
+            this.convertDate()
     }
 
     showModal(show){
@@ -66,6 +68,25 @@ class Profile extends Component{
         }, ()=>this.props.updateUser(this.state.displayName, this.state.url))
     }
 
+    convertDate(){
+        let date = new Date(this.props.userData.metadata.lastSignInTime)
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear() 
+        let hours = date.getHours()
+        let minutes = date.getMinutes()
+        if(month < 10){
+            this.setState({
+                date:  `${day}-0${month}-${year} a las ${hours}:${minutes}`
+            })
+        
+          }else{
+              this.setState({
+                  date: `${day}-${month}-${year} a las ${hours}:${minutes}`
+              })
+          }
+    }
+
 
     render(){
         const image = { uri: '/assets/gradient.jpg' }
@@ -84,23 +105,29 @@ class Profile extends Component{
                         <View style={styles.textContainer}>
                             <Text style={styles.mainText}>{this.props.userData.displayName}</Text>
                             <Text style={styles.secondText}>{this.props.userData.email}</Text>
-                            <Text style={styles.boldText}> Last signed in:</Text> <Text style={styles.secondText}>{this.props.userData.metadata.lastSignInTime}</Text>
-                            <Text style={styles.boldText}> Number of posts:</Text> <Text style={styles.secondText}> {this.state.posteos.length} </Text>
-                            <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text style={styles.texto}>Logout</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.editProfile} onPress={()=>this.showModal(true)} ><Text style={styles.texto}>Edit profile</Text></TouchableOpacity>
+                            <Text style={styles.boldText}> Última vez conectado fue el </Text> <Text style={styles.secondText}>{this.state.date}</Text>
+                            <Text style={styles.boldText}> Número de posteos:</Text> <Text style={styles.secondText}> {this.state.posteos.length} </Text>
+                            <View style={styles.inline}>
+                                <TouchableOpacity style={styles.logout} onPress={()=>this.props.logout()} ><Text style={styles.texto}>Logout</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.editProfile} onPress={()=>this.showModal(true)} ><Text style={styles.texto}>Editar perfil</Text></TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                     <View style={styles.profilePosts}>
-                        <Text  style={{fontWeight: "bold"}}>Mis posteos</Text>
-                        <FlatList 
-                            style={{
-                                width: '100%',
-                            }}
-                            contentContainerStyle={styles.listContainer}
-                            data= { this.state.posteos }
-                            keyExtractor = { post => post.id}
-                            renderItem = { ({item}) => <Post postData={item} />} 
-                            />
+                        {this.state.posteos.length===0 ? 
+                           <Text  style={{fontWeight: "bold"}}>No has posteado nada aún</Text> : 
+                           <React.Fragment>
+                               <Text  style={{fontWeight: "bold"}}>Mis posteos</Text>
+                               <FlatList 
+                                   style={{
+                                       width: '100%',
+                                   }}
+                                   contentContainerStyle={styles.listContainer}
+                                   data= { this.state.posteos }
+                                   keyExtractor = { post => post.id}
+                                   renderItem = { ({item}) => <Post postData={item} />} 
+                                   />
+                           </React.Fragment>}
                         </View>
                 </View>
                 {this.state.showModal ?
@@ -134,6 +161,13 @@ const styles = StyleSheet.create({
     listContainer:{
         flex:1,
         alignItems:'center'
+    },
+    inline:{
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-around',
+        width:'80%',
+        marginTop:10,
     },
     cross:{
         display:'flex',
@@ -204,7 +238,8 @@ const styles = StyleSheet.create({
     textContainer:{
         position:'absolute',
         top:100,
-        alignItems: 'center'
+        alignItems: 'center',
+        width:'70%'
     },
     main:{
         display:'flex',
@@ -257,7 +292,6 @@ const styles = StyleSheet.create({
         border: '1px solid ',
         borderRadius: '4%',
         paddingLeft: '2.5%',
-        marginTop: '10%',
         backgroundColor: '#2b1e49',
         paddingHorizontal: 8,
         paddingVertical: '0.5rem',
@@ -273,8 +307,6 @@ const styles = StyleSheet.create({
         border: '1px solid ',
         borderRadius: '4%',
         paddingLeft: '2.5%',
-        marginTop: '10%',
-        marginTop: '2%',
         backgroundColor: '#2b1e49',
         paddingHorizontal: 8,
         paddingVertical: '0.5rem',

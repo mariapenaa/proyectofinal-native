@@ -60,7 +60,6 @@ class Menu extends Component{
             })
     }
 
-
     login(email,pass){
         auth.signInWithEmailAndPassword(email,pass)
             .then( response => {
@@ -118,8 +117,8 @@ class Menu extends Component{
             <NavigationContainer>
             {this.state.userLogued == false ?
                 <Drawer.Navigator>
-                    <Drawer.Screen name="Registro" component={()=><Register register={(email, pass, username)=>this.register(email, pass, username)} error={this.state.error}/>} />
-                    <Drawer.Screen name="Login" component={()=><Login login={(email, pass)=>this.login(email, pass)} error={this.state.error}/>}/>
+                    <Drawer.Screen name="Registro" component={(drawerProps)=><Register drawerProps={drawerProps} register={(email, pass, username)=>this.register(email, pass, username)} error={this.state.error}/>} />
+                    <Drawer.Screen name="Login" component={(drawerProps)=><Login  drawerProps={drawerProps} login={(email, pass)=>this.login(email, pass)} error={this.state.error}/>}/>
                 </Drawer.Navigator> :
                 <Drawer.Navigator>
                     <Drawer.Screen name="Home" component={()=><Home />} />

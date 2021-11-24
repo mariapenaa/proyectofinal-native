@@ -36,6 +36,7 @@ class PostForm extends Component{
                 textoPost:'',
                 url:'',
                 loading:false,
+                showCamera:true,
             })
             db.collection('activity').add({
                 owner: auth.currentUser.email,

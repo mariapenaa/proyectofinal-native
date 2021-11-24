@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList, } from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert } from 'react-native';
 import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
@@ -16,6 +16,7 @@ class Post extends Component{
            comment: '',
            comments:0,
            date: '',
+           showAlert:false,
         }
     }
     componentDidMount(){
@@ -63,6 +64,7 @@ class Post extends Component{
             })
         })
     }
+
     showModal(show){
         this.setState({
             showModal: show ? true : false,
@@ -93,6 +95,13 @@ class Post extends Component{
         })
     }
 
+    toggleAlert(show){
+        console.log(show)
+        this.setState({
+            showAlert:show,
+        })
+    }
+
     deletePost(){
         db.collection('posts').where('createdAt','==',this.props.postData.data.createdAt)
         .onSnapshot(
@@ -104,8 +113,10 @@ class Post extends Component{
               })
             }
           ) 
-
+        this.toggleAlert(false)
     }
+    
+
     convertDate(){
         let date = new Date(this.props.postData.data.createdAt)
         let day = date.getDate()
@@ -130,11 +141,11 @@ class Post extends Component{
             <View style={styles.container} blurRadius={1}>
                <View style={styles.userInfo}>
                     <View style={styles.user}>
-                        <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName: ''} </Text> 
+                        <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName : ''} </Text> 
                         <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
                     </View>
-                    {this.props.postData.data.owner == auth.currentUser.email ? 
-                    <TouchableOpacity onPress={() => this.deletePost()}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : ''} 
+                    { this.props.postData.data.owner === auth.currentUser.email ? 
+                    <TouchableOpacity onPress={() => this.toggleAlert(true)}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : <Text></Text>} 
                 </View>
                 <View style={styles.imgContainer}>
                     {this.props.postData.data.photo ? 
@@ -144,13 +155,12 @@ class Post extends Component{
                 </View>
                 <View style={styles.actionContainer}>
                     <View style={styles.actionLine}>
-                        {this.state.myLike == false ? 
-                        <><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>:
-                        <><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></>}      
-                        <TouchableOpacity onPress={()=> this.showModal(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                        {this.state.myLike === false ? 
+                        <View style={styles.actionLine}><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>:
+                        <View style={styles.actionLine}><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>}      
+                        <TouchableOpacity onPress={()=> this.toggleAlert(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
                         <Text style={styles.userSecond}> {this.state.date}</Text>
                     </View>
-                   {/*  <Text>Likes: {this.state.likes}</Text>    */}
                     <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
                 </View>
                 {this.state.showModal ?
@@ -167,12 +177,27 @@ class Post extends Component{
                                 keyExtractor={ comment =>comment.createdAt.toString()}
                                 renderItem={ ({item}) => <View style={styles.flatlist}><Text>  <Icon name={'message-circle-outline'} width={15} height={15}></Icon>  {item.author}:  {item.text}</Text> </View>}/> 
                                 <View style={styles.comment}>  
-                                    <TextInput placeholder="Agregá un nuevo comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
+                                    <Text>{this.state.comments===0 ? 'No hay comentarios aun': ''}</Text>
+                                    <TextInput placeholder="Agregá un comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
                                     <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
                     </Modal> : <Text></Text> }
+                    {this.state.showAlert ?
+                
+                <Modal  visible={this.state.showAlert} animationType='fade' transparent={true} avoidKeyboard={true}>
+               
+                    <View style={styles.modal}>
+                        <View style={styles.modalView}>
+                            <Text>¿Estás seguro de que deseas continuar?</Text>
+                            <View style={styles.buttonDisplayInline}>
+                                <TouchableOpacity style={styles.buttonComentarDisabled} onPress={()=>this.toggleAlert(false)}><Text>Cancelar</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.buttonRed} onPress={()=>this.deletePost()}><Text>Eliminar</Text></TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal> : <Text></Text> }
             </View>
         )
     }
@@ -226,6 +251,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         marginVertical:10,
         border: "1px solid pink",
+        overflowY:'hidden'
     },
     photo:{
         flex:1
@@ -248,6 +274,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: '100%',
         justifyContent: 'space-between'
+    },
+    buttonDisplayInline:{
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-around'
     },
     userMain:{
         fontSize:16,
@@ -298,6 +330,18 @@ const styles = StyleSheet.create({
             boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);',
             color:'white'
     },
+    buttonRed:{
+        backgroundColor:'red',
+        paddingHorizontal: 10,
+        paddingVertical: '0.7rem',
+        textAlign: 'center',
+        marginTop:'2rem',
+        marginBottom:'1.4rem',
+        borderRadius:4, 
+        fontSize:'1rem',
+        boxShadow:'0px 6px 16px 0px rgba(0,0,0,0.37);',
+        color:'white'
+},
     buttonComentarDisabled:{
         backgroundColor:'grey',
         color:'white',

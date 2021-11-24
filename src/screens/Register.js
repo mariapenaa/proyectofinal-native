@@ -16,7 +16,6 @@ class Register extends Component{
         
     }
 
-
     render(){
         return(
             <View style={styles.formContainer}>
@@ -38,20 +37,14 @@ class Register extends Component{
                     keyboardType='email-address'
                     secureTextEntry={true}
                 />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(text)=>this.setState({password: text})}
-                    placeholder='Repeat password'
-                    keyboardType='email-address'
-                    secureTextEntry={true}
-                />
-
                 <Text style={styles.error}>{this.props.error}</ Text>
-                <TouchableOpacity style={this.state.email == '' || this.state.username == '' || this.state.password == '' ? styles.buttonDisabled : styles.button} onPress={()=>this.props.register(this.state.email, this.state.password, this.state.username)} 
+                <TouchableOpacity style={this.state.email == '' || this.state.username == '' || this.state.password == '' ? styles.buttonDisabled : styles.button} 
+                onPress={()=>this.props.register(this.state.email, this.state.password, this.state.username)} 
                 disabled={this.state.email == '' || this.state.username == '' || this.state.password == '' ? true : false}>
                     <Text style={styles.textButton}>Registrarse</Text>    
                 </TouchableOpacity>
-                <Text style={styles.redirect}>¿Ya tienes una cuenta? <Text style={styles.span}>Logueate.</Text></Text>
+                <Text style={styles.redirect}>¿Ya tienes una cuenta? 
+                <TouchableOpacity onPress={()=> this.props.drawerProps.navigation.navigate('Login')}><Text style={styles.span} >Logueate.</Text></TouchableOpacity></Text>
             </View>
         )
     }
