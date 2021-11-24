@@ -49,7 +49,7 @@ savePhoto(){
                     this.props.onImageUpload(url);
                     this.setState({
                         photo:'',
-                        loading:false
+                        loading:false,
                     })
                 })
             })
@@ -100,7 +100,8 @@ const styles= StyleSheet.create({
         justifyContent:'center'
     },
     imageContainer:{
-        position:'relative'
+        position:'relative',
+        display:'flex',
     },
     loader:{
         position:'absolute',
