@@ -22,7 +22,7 @@ class Profile extends Component{
 
     componentDidMount(){
         console.log(auth.currentUser)
-            db.collection('posts').where("owner", "==", auth.currentUser.email).onSnapshot(
+            db.collection('posts').where("owner", "==", auth.currentUser.email).orderBy('createdAt', 'desc').onSnapshot(
               docs => {
                 console.log(docs);
                 //Array para crear datos en formato más útil.
