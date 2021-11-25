@@ -158,7 +158,7 @@ class Post extends Component{
                         {this.state.myLike === false ? 
                         <View style={styles.actionLine}><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>:
                         <View style={styles.actionLine}><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>}      
-                        <TouchableOpacity onPress={()=> this.toggleAlert(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                        <TouchableOpacity onPress={()=> this.showModal(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
                         <Text style={styles.userSecond}> {this.state.date}</Text>
                     </View>
                     <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
