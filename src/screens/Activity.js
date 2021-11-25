@@ -38,7 +38,7 @@ class Activity extends Component{
       <View style={styles.container}>
         <FlatList 
           data= { this.state.activity }
-          keyExtractor = { act => act.id}
+          keyExtractor = { act => act.id.toString()}
           renderItem = { ({item}) => <ActivityCard data={item} />} 
         />
       </View>

@@ -39,7 +39,7 @@ class Home extends Component{
         <FlatList 
           contentContainerStyle={styles.postContainer}
           data= { this.state.posteos }
-          keyExtractor = { post => post.id}
+          keyExtractor = { post => post.id.toString()}
           renderItem = { ({item}) => <Post postData={item} />} 
         />
       </View>

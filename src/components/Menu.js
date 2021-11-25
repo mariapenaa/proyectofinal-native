@@ -45,11 +45,11 @@ class Menu extends Component{
         auth.createUserWithEmailAndPassword(email, pass)
             .then( ()=>{
                 console.log('Registrado');
-                this.updateUser(username, 'https://firebasestorage.googleapis.com/v0/b/proyectofinal-native.appspot.com/o/profile.png?alt=media&token=810a4f2f-a3c3-497f-96e4-5d5737b9fda3')
                 this.setState({
                     error:'',
                     userLogued:false,
                 })
+                this.updateUser(username, 'https://firebasestorage.googleapis.com/v0/b/proyectofinal-native.appspot.com/o/profile.png?alt=media&token=810a4f2f-a3c3-497f-96e4-5d5737b9fda3')
             })
             .catch( error => {
                 console.log(error);

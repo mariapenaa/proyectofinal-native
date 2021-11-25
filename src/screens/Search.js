@@ -57,7 +57,7 @@ class Search extends Component{
             <FlatList 
                 contentContainerStyle={styles.postContainer}
                 data= { this.state.results }
-                keyExtractor = { post => post.id}
+                keyExtractor = { post => post.id.toString()}
                 renderItem = { ({item}) => <Post postData={item} />} 
             />
             }
