@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert } from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert, TextPropTypes } from 'react-native';
 import { db } from '../firebase/config';
 import firebase from 'firebase';
 import { auth } from '../firebase/config';
@@ -17,10 +17,11 @@ class Post extends Component{
            comments:0,
            date: '',
            showAlert:false,
+           display:true,
         }
     }
     componentDidMount(){
-        console.log(this.props.postData)
+        console.log(this.props)
 
             this.setState({
                 likes: this.props.postData.data.likes ? this.props.postData.data.likes.length : 0,
@@ -111,9 +112,13 @@ class Post extends Component{
               docs.forEach( doc => {
                 doc.ref.delete()
               })
+              this.toggleAlert(false);
+              this.setState({
+                  display:false,
+              })
             }
           ) 
-        this.toggleAlert(false)
+    
     }
     
 
@@ -136,70 +141,78 @@ class Post extends Component{
     }
 
     render(){
-        console.log(this.state)
-        return(
-            <View style={styles.container} blurRadius={1}>
-               <View style={styles.userInfo}>
-                    <View style={styles.user}>
-                        <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName : ''} </Text> 
-                        <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
+        if(this.state.display){
+            return(
+                <View style={styles.container} blurRadius={1}>
+                   <View style={styles.userInfo}>
+                        <View style={styles.user}>
+                            <Text style={styles.userMain}>@{this.props.postData.data.ownerName ? this.props.postData.data.ownerName : ''} </Text> 
+                            <Text style={styles.userSecond}>{this.props.postData.data.owner} </Text> 
+                        </View>
+                        { this.props.postData.data.owner === auth.currentUser.email ? 
+                        <TouchableOpacity onPress={() => this.toggleAlert(true)}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : <Text></Text>} 
                     </View>
-                    { this.props.postData.data.owner === auth.currentUser.email ? 
-                    <TouchableOpacity onPress={() => this.toggleAlert(true)}><Icon name='trash-outline' width={30} height={30} fill='red'></Icon> </TouchableOpacity> : <Text></Text>} 
-                </View>
-                <View style={styles.imgContainer}>
-                    {this.props.postData.data.photo ? 
-                    <Image 
-                    style={styles.photo}
-                    source={{uri:this.props.postData.data.photo}}/> : <Text></Text>}
-                </View>
-                <View style={styles.actionContainer}>
-                    <View style={styles.actionLine}>
-                        {this.state.myLike === false ? 
-                        <View style={styles.actionLine}><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>:
-                        <View style={styles.actionLine}><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>}      
-                        <TouchableOpacity onPress={()=> this.showModal(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
-                        <Text style={styles.userSecond}> {this.state.date}</Text>
+                    <View style={styles.imgContainer}>
+                        {this.props.postData.data.photo ? 
+                        <Image 
+                        style={styles.photo}
+                        source={{uri:this.props.postData.data.photo}}/> : <Text></Text>}
                     </View>
-                    <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
-                </View>
-                {this.state.showModal ?
-                
-                    <Modal  visible={this.state.showModal} animationType='fade' transparent={true} avoidKeyboard={true}>
+                    <View style={styles.actionContainer}>
+                        <View style={styles.actionLine}>
+                            {this.state.myLike === false ? 
+                            <View style={styles.actionLine}><TouchableOpacity onPress={()=> this.darLike()}> <Icon name='heart-outline' width={30} height={30}/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>:
+                            <View style={styles.actionLine}><TouchableOpacity onPress ={()=> this.sacarLike()}><Icon name='heart' width={30} height={30} fill="red"/></TouchableOpacity><Text style={styles.subText}>{this.state.likes}</Text></View>}      
+                            <TouchableOpacity onPress={()=> this.showModal(true)}><Icon name='message-circle-outline' width={30} height={30} /></TouchableOpacity><Text style={styles.subText}>{this.state.comments}</Text>
+                            <Text style={styles.userSecond}> {this.state.date}</Text>
+                        </View>
+                        <View style={styles.textoPost}><Text>{this.props.postData.data.texto}</Text></View>
+                    </View>
+                    {this.state.showModal ?
+                    
+                        <Modal  visible={this.state.showModal} animationType='fade' transparent={true} avoidKeyboard={true}>
+                       
+                            <View style={styles.modal}>
+                                <View style={styles.modalView}>
+                                    <View style={styles.cross}>
+                                        <TouchableOpacity onPress={()=> this.showModal(false)} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
+                                    </View>
+                                    <FlatList
+                                    data={this.props.postData.data.comments}
+                                    keyExtractor={ comment =>comment.createdAt.toString()}
+                                    renderItem={ ({item}) => <View style={styles.flatlist}><Text>  <Icon name={'message-circle-outline'} width={15} height={15}></Icon>  {item.author}:  {item.text}</Text> </View>}/> 
+                                    <View style={styles.comment}>  
+                                        <Text>{this.state.comments===0 ? 'No hay comentarios aun': ''}</Text>
+                                        <TextInput placeholder="Agregá un comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
+                                        <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal> : <Text></Text> }
+                        {this.state.showAlert ?
+                    
+                    <Modal  visible={this.state.showAlert} animationType='fade' transparent={true} avoidKeyboard={true}>
                    
                         <View style={styles.modal}>
                             <View style={styles.modalView}>
-                                <View style={styles.cross}>
-                                    <TouchableOpacity onPress={()=> this.showModal(false)} ><Icon name='close-outline' width={30} height={30} ></Icon></TouchableOpacity>
-                                </View>
-                                <FlatList
-                                data={this.props.postData.data.comments}
-                                keyExtractor={ comment =>comment.createdAt.toString()}
-                                renderItem={ ({item}) => <View style={styles.flatlist}><Text>  <Icon name={'message-circle-outline'} width={15} height={15}></Icon>  {item.author}:  {item.text}</Text> </View>}/> 
-                                <View style={styles.comment}>  
-                                    <Text>{this.state.comments===0 ? 'No hay comentarios aun': ''}</Text>
-                                    <TextInput placeholder="Agregá un comentario..." style={styles.input} keyboardType="default" multiline onChangeText={(text)=> this.setState({ comment: text })} value={this.state.comment} /> 
-                                    <TouchableOpacity style={this.state.comment == '' ? styles.buttonComentarDisabled : styles.buttonComentar } onPress={()=> this.guardarComentario()} disabled={this.state.comment == '' ? true: false}> <Text style={styles.buttonText}>Guardar Comentario</Text> </TouchableOpacity>
+                                <Text>¿Estás seguro de que deseas continuar?</Text>
+                                <View style={styles.buttonDisplayInline}>
+                                    <TouchableOpacity style={styles.buttonComentarDisabled} onPress={()=>this.toggleAlert(false)}><Text>Cancelar</Text></TouchableOpacity>
+                                    <TouchableOpacity style={styles.buttonRed} onPress={()=>this.deletePost()}><Text>Eliminar</Text></TouchableOpacity>
                                 </View>
                             </View>
                         </View>
                     </Modal> : <Text></Text> }
-                    {this.state.showAlert ?
-                
-                <Modal  visible={this.state.showAlert} animationType='fade' transparent={true} avoidKeyboard={true}>
-               
-                    <View style={styles.modal}>
-                        <View style={styles.modalView}>
-                            <Text>¿Estás seguro de que deseas continuar?</Text>
-                            <View style={styles.buttonDisplayInline}>
-                                <TouchableOpacity style={styles.buttonComentarDisabled} onPress={()=>this.toggleAlert(false)}><Text>Cancelar</Text></TouchableOpacity>
-                                <TouchableOpacity style={styles.buttonRed} onPress={()=>this.deletePost()}><Text>Eliminar</Text></TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </Modal> : <Text></Text> }
-            </View>
+                </View>
+            )
+
+        }else{
+            return(
+            <View></View>
         )
+
+         }
+            
     }
 
 }

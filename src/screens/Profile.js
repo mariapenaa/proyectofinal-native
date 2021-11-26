@@ -47,13 +47,13 @@ class Profile extends Component{
             this.convertDate()
     }
 
+
+
     showModal(show){
         this.setState({
             showModal: show ? true : false,
         })
     }
-
-
 
     onUserChange(user){
         this.setState({
@@ -125,6 +125,7 @@ class Profile extends Component{
                                    contentContainerStyle={styles.listContainer}
                                    data= { this.state.posteos }
                                    keyExtractor = { post => post.id.toString()}
+                                   
                                    renderItem = { ({item}) => <Post postData={item} />} 
                                    />
                            </React.Fragment>}
